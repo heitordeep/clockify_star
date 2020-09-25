@@ -3,12 +3,15 @@ from datetime import date as dt
 from datetime import datetime, timedelta
 from os import path
 
+import pendulum
 import requests
 from decouple import config
 from requests.exceptions import HTTPError
 from rich.console import Console
 
 console = Console()
+
+local_tz = pendulum.timezone('America/Sao_Paulo')
 
 
 class Clockify:
@@ -19,7 +22,7 @@ class Clockify:
         }
         self.endpoint = f'workspaces/{config("workspaces")}/user/{config("user")}/time-entries'
         self.allowed_url = f'https://api.clockify.me/api/v1/{self.endpoint}'
-        self.hour = datetime.now() + timedelta(hours=3)
+        self.hour = datetime.now(tz=local_tz) + timedelta(hours=3)
 
     def start(self, job, payload):
         job['tagIds'] = payload

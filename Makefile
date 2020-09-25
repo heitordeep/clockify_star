@@ -1,3 +1,5 @@
+#!/bin/bash
+
 SHELL=/bin/bash
 
 help:
@@ -27,6 +29,17 @@ requirements: ## Install project packages.
 	@pip install --upgrade pip
 	@pip install -r requirements/requirements_dev.txt 
 
+# -------- Docker ---------
+pull:
+	@docker pull puckel/docker-airflow
+
+run:
+	@docker run -d -p 8080:8080 -v /opt/airflow/dags:/usr/local/airflow/dags -v /opt/airflow/clockify:/usr/local/airflow puckel/docker-airflow webserver
+
+access:
+	@docker exec -it job-clockify bash
+
+# -------- App ------------
 
 run: clean ## Post hours in the clockify.
 	@python main.py $(args)
