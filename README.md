@@ -64,6 +64,11 @@ O projeto está em desenvolvimento, mas você já pode contar com as seguintes f
       ```shell
       airflow@7669e2e827fa:~$  pip -r install clockify/requirements/requirements_dev.txt
       ```
+
+      ```shell
+      airflow@7669e2e827fa:~$ airflow scheduler
+      ```
+      
       <br><br>
 - Acessar o Airflow:
     http://0.0.0.0:8080/admin/
