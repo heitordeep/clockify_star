@@ -30,6 +30,7 @@ class Clockify:
             "start": f'{dt.today()}T{self.hour.strftime("%H:%M:%S")}Z',
         }
 
+        # Check task is empty.
         if len(payload) != 0 and job['taskId'] != 0:
             for key, value in job.items():
                 data.update({key: value})
@@ -61,7 +62,8 @@ class Clockify:
             response.raise_for_status()
 
             console.print(
-                f'\n[bold yellow]Logado com sucesso![/bold yellow] :smiley:'
+                f'\n[bold yellow]Logado com sucesso! -'
+                f'Hora: {dt.today()} - {self.hour.strftime("%H:%M:%S")}[/bold yellow] :smiley:'
             )
 
         except HTTPError as error:
@@ -83,7 +85,8 @@ class Clockify:
             response.raise_for_status()
 
             console.print(
-                f'\n[bold yellow]Deslogado com sucesso![/bold yellow] :smiley:'
+                f'\n[bold yellow]Deslogado com sucesso! - '
+                f'Hora: {dt.today()} - {self.hour.strftime("%H:%M:%S")}[/bold yellow] :smiley:'
             )
 
         except HTTPError as error:

@@ -55,7 +55,8 @@ def create_dag(dag_id, schedule):
             bash_command=(
                 f'. {activate_env} && cd {path_project}/ && '
                 f'. {path_project}/cron.sh {command(schedule)} >> '
-                f'{path_allowed}/log_clockify.txt 2>&1 '
+                f'{path_allowed}/log_clockify.txt 2>&1 && '
+                f'. {path_project}/cron.sh update'
             ),
             dag=dag,
         )

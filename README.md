@@ -31,7 +31,7 @@ O projeto está em desenvolvimento, mas você já pode contar com as seguintes f
       ```
     - Vamos criar dois volumes no nosso container, o primeiro apontando para dags que é onde o script de tarefas do airflow precisa ficar e o segundo, os arquivos do projeto.<br>
         ```shell
-        $ make run
+        $ make up
         ```
     - Agora, mova os arquivos para o docker:
       ```shell
@@ -64,6 +64,10 @@ O projeto está em desenvolvimento, mas você já pode contar com as seguintes f
       ```shell
       airflow@7669e2e827fa:~$  pip -r install clockify/requirements/requirements_dev.txt
       ```
+
+      ```shell
+      airflow@7669e2e827fa:~$ airflow scheduler
+      ````
       <br><br>
 - Acessar o Airflow:
     http://0.0.0.0:8080/admin/

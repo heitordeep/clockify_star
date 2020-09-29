@@ -82,18 +82,17 @@ def read_projects():
 
 if __name__ == "__main__":
 
-    if 'get_task' == argv[1]:
-        # Two parameters, get_task and a projectID
-        get_task()
+    # Two parameters, get_task and a projectID
+    list_taks = {
+        'get_task': get_tags,
+        'get_project': get_projects,
+        'list_projects': read_projects,
+        'get_tags': get_tags
+    }
 
-    elif 'get_project' == argv[1]:
-        get_projects()
-
-    elif 'list_projects' == argv[1]:
-        read_projects()
-
-    elif 'get_tags' == argv[1]:
-        get_tags()
+    parameter = argv[1]
+    if parameter in list_taks.keys():
+        list_taks[parameter]()
 
     else:
         console.print(
