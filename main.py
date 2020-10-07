@@ -9,9 +9,9 @@ post_hour = Clockify()
 
 if __name__ == "__main__":
 
-    if 'stop' == argv[1]:
+    if 'stop' in argv[1]:
         post_hour.end()
-    elif 'start' == argv[1]:
+    elif 'start' in argv[1]:
         post_hour.get_job()
     else:
         console.print(

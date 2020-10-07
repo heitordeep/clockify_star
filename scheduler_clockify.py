@@ -16,8 +16,8 @@ config_default = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'start_date': datetime(2020, 9, 24, tzinfo=local_tz),
-    'retry_delay': timedelta(minutes=3),
+    'start_date': datetime(2020, 10, 7, tzinfo=local_tz),
+    'retry_delay': timedelta(minutes=1),
 }
 
 dag_config = {
@@ -39,7 +39,7 @@ def create_dag(dag_id, schedule):
 
     def call_clockify(**kwargs):
         activate_env = f'{path_allowed}/venv/bin/activate'
-        path_project = f'{path_allowed}/clockify'
+        path_project = f'{path_allowed}/clockify_star'
 
         # Checks whether to start or stop.
         command = (
@@ -49,21 +49,32 @@ def create_dag(dag_id, schedule):
         )
 
         # Activate env, run shell script with parameter (start or stop)
-        # and Save logs.
+        # and save logs.
         bash_start = BashOperator(
             task_id=f'run-script-shell',
             bash_command=(
                 f'. {activate_env} && cd {path_project}/ && '
                 f'. {path_project}/cron.sh {command(schedule)} >> '
-                f'{path_allowed}/log_clockify.txt 2>&1 && '
-                f'. {path_project}/cron.sh update'
+                f'{path_allowed}/log_clockify.txt 2>&1'
+            ),
+            dag=dag,
+        )
+
+        # Update task, tags, projects id.
+        bash_update_json = BashOperator(
+            task_id='update-json',
+            bash_command=(
+                f'. {activate_env} && cd {path_project}/ &&'
+                f'. {path_project}/cron.sh update >> '
+                f'{path_allowed}/log_update_json.txt 2>&1'
             ),
             dag=dag,
         )
 
         bash_start.execute(context=kwargs)
+        bash_update_json.execute(context=kwargs)
 
-        bash_start
+        bash_start >> bash_update_json
 
     with dag:
 

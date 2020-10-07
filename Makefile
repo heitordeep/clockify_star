@@ -30,19 +30,22 @@ requirements: ## Install project packages.
 	@pip install -r requirements/requirements_dev.txt 
 
 # -------- Docker ---------
-pull:
+pull: ## Pull image airflow
 	@docker pull puckel/docker-airflow
 
-up:
-	@docker run -d -p 8080:8080 --name job-clockify -v /opt/airflow/dags:/usr/local/airflow/dags -v /opt/airflow/clockify:/usr/local/airflow puckel/docker-airflow webserver
+up: ## Create container airflow. Name is job-clockify
+	@docker run -d -p 8080:8080 --name job-clockify -v /opt/airflow/dags:/usr/local/airflow/dags puckel/docker-airflow webserver
 
-access:
+file_up: ## Upload files project in container.
+	@docker cp . job-clockify:/usr/local/airflow
+
+access: ## Access container job-clockify
 	@docker exec -it job-clockify bash
 
 # -------- App ------------
 
-run: clean ## Post hours in the clockify.
-	@python main.py $(args)
+run: clean ## Post hours in the clockify. start or stop
+	@python main.py $(job)
 
 get_param: clean ## Update files job.
 	@python clockify_app/get_parameters_api.py $(id)

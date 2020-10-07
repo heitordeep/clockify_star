@@ -4,120 +4,71 @@ from datetime import datetime, timedelta
 from os import path
 
 import pendulum
-import requests
-from decouple import config
-from requests.exceptions import HTTPError
 from rich.console import Console
+
+from clockify_app.update_requests import HandleRequests
 
 console = Console()
 
 local_tz = pendulum.timezone('America/Sao_Paulo')
 
+request = HandleRequests()
+
 
 class Clockify:
     def __init__(self):
-        self.headers = {
-            'X-Api-Key': config('key'),
-            'content-type': 'application/json',
-        }
-        self.endpoint = f'workspaces/{config("workspaces")}/user/{config("user")}/time-entries'
-        self.allowed_url = f'https://api.clockify.me/api/v1/{self.endpoint}'
         self.hour = datetime.now(tz=local_tz) + timedelta(hours=3)
 
-    def start(self, job, payload):
-        job['tagIds'] = payload
-        data = {
-            "start": f'{dt.today()}T{self.hour.strftime("%H:%M:%S")}Z',
-        }
+    def start(self, job: dict):
 
-        # Check task is empty.
-        if len(payload) != 0 and job['taskId'] != 0:
-            for key, value in job.items():
-                data.update({key: value})
-
-        else:
-            del job['taskId']
-
-            for key, value in job.items():
-                data.update({key: value})
-
-        self.post(data)
+        job.update(
+            {'start': f'{dt.today()}T{self.hour.strftime("%H:%M:%S")}Z'}
+        )
+        request.post(job)
 
     def end(self):
 
         data = {"end": f'{dt.today()}T{self.hour.strftime("%H:%M:%S.%f")}Z'}
+        request.patch(data)
 
-        self.patch(data)
+    def create_job(self, job: list, tags: list) -> dict:
+        payload = {}
+        
+        if job['taskId'] == 0:
+            del job['taskId']
+        
+        for tag_job in job['tagIds']:
+            if tag_job in tags.keys():
+                payload[tag_job] = tags[tag_job]
+        
+        job['tagIds'] = list(payload.values())
 
-    def post(self, data):
+        return payload
 
-        try:
+    def read_file(self, file_name: str) -> dict:
+        
+        with open(path.join('job/', f'{file_name}.json'), 'r') as f:
+            data = json.loads(f.read())
 
-            response = requests.post(
-                f'{self.allowed_url}',
-                headers=self.headers,
-                data=json.dumps(data),
-            )
-
-            response.raise_for_status()
-
-            console.print(
-                f'\n[bold yellow]Logado com sucesso! -'
-                f'Hora: {dt.today()} - {self.hour.strftime("%H:%M:%S")}[/bold yellow] :smiley:'
-            )
-
-        except HTTPError as error:
-            console.print(
-                f'POST:\n[bold red]Ops, algo deu errado ao finalizar!\n'
-                f'Error:\n{error}[/bold red]'
-            )
-
-    def patch(self, data):
-
-        try:
-
-            response = requests.patch(
-                f'{self.allowed_url}',
-                headers=self.headers,
-                data=json.dumps(data),
-            )
-
-            response.raise_for_status()
-
-            console.print(
-                f'\n[bold yellow]Deslogado com sucesso! - '
-                f'Hora: {dt.today()} - {self.hour.strftime("%H:%M:%S")}[/bold yellow] :smiley:'
-            )
-
-        except HTTPError as error:
-            console.print(
-                f'Patch:\n[bold red]Ops, algo deu errado ao finalizar!\n'
-                f'Error:\n{error}[/bold red]'
-            )
+        return data
 
     def get_job(self):
 
-        payload = []
         files_names = ['tags', 'start_job']
-        files = {}
 
-        for file_name in files_names:
-            with open(path.join('job/', f'{file_name}.json'), 'r') as f:
-                files[file_name] = json.loads(f.read())
+        files = [self.read_file(x) for x in files_names]
 
-        tag = files['tags']
-        tag_job = files['start_job']['tagIds']
+        # files[0] - tags api and files[1] - Tags of start_job
+        content = self.create_job(files[1], files[0])
 
-        for name in tag.keys():
-            if name in tag_job:
-                payload.append(tag[name])
+        validation_count = lambda x,v: len(x) == len(v)
 
-        if len(tag_job) == len(payload):
-            self.start(files['start_job'], payload)
+        if validation_count(content, files[1]['tagIds']):
+            self.start(files[1])
         else:
             console.print(
-                f'\n[bold red]Ops, tags invalidas, verifique se está correto: '
-                f'{" | ".join(tag for tag in tags)}\n[/bold red]'
+                f'\n[bold red]Ops, tags invalidas ou vázias\nTags que foram passadas: '
+                f'{" | ".join(tag for tag in tag_job["tagIds"])}\n[/bold red]'
                 '[bold red]Recomendo você olhar o seu arquivo[/bold red] '
                 '[bold cyan]start_job.json[/bold cyan] :smiley:'
             )

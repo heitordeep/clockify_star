@@ -23,30 +23,39 @@ O projeto está em desenvolvimento, mas você já pode contar com as seguintes f
 - Requirements: Contém todas as bibliotecas necessárias para rodar o script.
 - MakeFile: ```$ make requirements```
 
+
+## :closed_lock_with_key: Credencial:
+
+- É necessário criar um arquivo ```.env``` com as credenciais:
+
+    - **key**=chave-key_api<br>
+    - **workspaces**=id_empresa<br>
+    - **user**=id_usuário<br>
+
+
 ## :alarm_clock: Airflow:
 - Automatizar execuções no **Airflow**:
     - Primeiro precisamos baixar a imagem do Airflow via docker.<br>
       ```shell
       $ make pull
       ```
-    - Vamos criar dois volumes no nosso container, o primeiro apontando para dags que é onde o script de tarefas do airflow precisa ficar e o segundo, os arquivos do projeto.<br>
+    - Vamos criar um volume no nosso container, apontando para dags que é onde o script de tarefas do airflow precisa ficar:<br>
         ```shell
         $ make up
         ```
-    - Agora, mova os arquivos para o docker:
+
+    - Em seguida, vamos mover os arquivos do projeto para dentro do container:
+
+        ```shell
+        $ make file_up
+        ```
+        
+    - Agora, mova o arquivo de scheduler para a pasta dags:
+
       ```shell
       $ cp clockify_star/scheduler_clockify.py /opt/airflow/dags/ 
       ```
-      
-    - Adicionar os arquivos do projeto:
-      ```shell
-      $ cp -r clockify_star/* /opt/airflow/clockify && cp -r clockify_star/.env /opt/airflow/clockify
-      ```
-      
-    - Remover arquivos desnecessários no docker:
-      ```shell
-      $ rm -rf /opt/airflow/clockify/scheduler_clockify.py && rm -rf /opt/airflow/clockify/run.sh
-      ```
+        
 - Agora, precisamos instalar as bibliotecas no docker:
    - Criando env e instalando bibliotecas:
    
@@ -75,17 +84,8 @@ O projeto está em desenvolvimento, mas você já pode contar com as seguintes f
     ![airflow](https://user-images.githubusercontent.com/17969551/94273742-2f3dca80-ff1b-11ea-8204-9ae0dafb3039.png)
 
 - OBS: As definições de horas e configuração das task é definida no arquivo **scheduler_clockify.py**
-- OBS 2: Quando for necessário mudar as tags no clockify, será necessário mover o arquivo **start_job.json** atualizado para **/opt/airflow/clockify/job/**
+- OBS 2: Quando for necessário mudar as tags no clockify, será necessário mover o arquivo **start_job.json** atualizado para **/usr/local/airflow/clockify_star/job/** dentro do container.
 
-      
-
-## :closed_lock_with_key: Credencial:
-
-- É necessário criar um arquivo ```.env``` com as credenciais:
-
-    - **key**=chave-key_api<br>
-    - **workspaces**=id_empresa<br>
-    - **user**=id_usuário<br>
     
 - É necessário também criar um arquivo ```start_job.json``` na pasta **job**:
     
@@ -126,12 +126,12 @@ O projeto está em desenvolvimento, mas você já pode contar com as seguintes f
 ![Captura de tela de 2020-08-24 14-59-01](https://user-images.githubusercontent.com/17969551/91079454-708c4300-e61a-11ea-86db-a9d48e3ea25d.png)
 
 
-## 🚀 Executar script:
+## 🚀 Executar script fora do Docker:
 - No modo executar, possui dois paramêtros, **start** e **stop**
 
 - Caso esteja utilizando **pyenv**:
   - Iniciar o dia de trabalho: ```$ sh run.sh start```  
   - Encerrar o dia de trabalho: ```$ sh run.sh stop```  
 - Caso esteja utilizando outra virtualização:
-  - Iniciar o dia de trabalho: ```$ make run args=start```
-  - Encerrar o dia de trabalho: ```$ make run args=stop``` 
+  - Iniciar o dia de trabalho: ```$ make run job=start```
+  - Encerrar o dia de trabalho: ```$ make run job=stop``` 

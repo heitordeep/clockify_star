@@ -2,7 +2,7 @@
 
 param=$1
 ARGS_ALLOWED=1
-PATH_FILE=/usr/local/airflow/clockify
+PATH_FILE=/usr/local/airflow/clockify_star
 
 if [ -z $param ]
     then 
@@ -14,7 +14,8 @@ elif [ $# -gt $ARGS_ALLOWED ]
 
 elif [ $param = "update" ]
     then 
-        python $PATH_FILE/clockify_app/get_parameters_api.py get_task
+        PROJECT_ID=$(cat $PATH_FILE/job/start_job.json | grep -i projectId | cut -d ':' -f2 | cut -d '"' -f2)
+        python $PATH_FILE/clockify_app/get_parameters_api.py get_task $PROJECT_ID
         python $PATH_FILE/clockify_app/get_parameters_api.py get_project
         python $PATH_FILE/clockify_app/get_parameters_api.py get_tags
 else 
