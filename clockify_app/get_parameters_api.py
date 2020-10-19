@@ -16,7 +16,7 @@ class HandleParameters:
     def get_projects(self):
 
         response = request.get(url='/projects')
-    
+
         data_project = {
             project['name']: project['id'] for project in response.json()
         }
@@ -67,26 +67,26 @@ class HandleParameters:
             f'\n[bold yellow]Projects:[/bold yellow]\n[bold blue]{data_projects}[/bold blue]'
         )
 
+    def validation_parameter(self, parameter):
+
+        # Two parameters, get_task and a projectID
+        list_taks = {
+            'get_task': parameters.get_tasks,
+            'get_project': parameters.get_projects,
+            'list_projects': parameters.read_projects,
+            'get_tags': parameters.get_tags,
+        }
+
+        if parameter in list_taks.keys():
+            list_taks[parameter]()
+        else:
+            console.print(
+                '[bold red]Você só possui permissões das seguintes pesquisas:[/bold red]\n'
+                '[bold cyan]get_task | get_project | list_projects[/bold cyan]'
+            )
+
 
 if __name__ == "__main__":
 
     parameters = HandleParameters()
-
-    # Two parameters, get_task and a projectID
-
-    list_taks = {
-        'get_task': parameters.get_tasks,
-        'get_project': parameters.get_projects,
-        'list_projects': parameters.read_projects,
-        'get_tags': parameters.get_tags,
-    }
-
-    parameter = argv[1]
-    if parameter in list_taks.keys():
-        list_taks[parameter]()
-
-    else:
-        console.print(
-            '[bold red]Você só possui permissões das seguintes pesquisas:[/bold red]\n'
-            '[bold cyan]get_task | get_project | list_projects[/bold cyan]'
-        )
+    parameters.validation_parameter(argv[1])

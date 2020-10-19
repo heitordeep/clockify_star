@@ -1,0 +1,11 @@
+version: "3"
+services:
+  airflow:
+    image: puckel/docker-airflow
+    container_name: job-clockify
+    ports:
+      - "8080:8080"
+    volumes: 
+      - /opt/airflow/dags:/usr/local/airflow/dags
+    command: 
+      webserver

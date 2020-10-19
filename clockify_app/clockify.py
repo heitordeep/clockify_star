@@ -3,9 +3,9 @@ from datetime import date as dt
 from datetime import datetime, timedelta
 from os import path
 
-import pendulum
 from rich.console import Console
 
+import pendulum
 from clockify_app.update_requests import HandleRequests
 
 console = Console()
@@ -33,20 +33,20 @@ class Clockify:
 
     def create_job(self, job: list, tags: list) -> dict:
         payload = {}
-        
+
         if job['taskId'] == 0:
             del job['taskId']
-        
+
         for tag_job in job['tagIds']:
             if tag_job in tags.keys():
                 payload[tag_job] = tags[tag_job]
-        
+
         job['tagIds'] = list(payload.values())
 
         return payload
 
     def read_file(self, file_name: str) -> dict:
-        
+
         with open(path.join('job/', f'{file_name}.json'), 'r') as f:
             data = json.loads(f.read())
 
@@ -61,7 +61,7 @@ class Clockify:
         # files[0] - tags api and files[1] - Tags of start_job
         content = self.create_job(files[1], files[0])
 
-        validation_count = lambda x,v: len(x) == len(v)
+        validation_count = lambda x, v: len(x) == len(v)
 
         if validation_count(content, files[1]['tagIds']):
             self.start(files[1])

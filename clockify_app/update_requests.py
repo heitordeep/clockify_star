@@ -2,11 +2,12 @@ import json
 from datetime import date as dt
 from datetime import datetime, timedelta
 
+from rich.console import Console
+
 import pendulum
 import requests
 from decouple import config
 from requests.exceptions import HTTPError
-from rich.console import Console
 
 console = Console()
 local_tz = pendulum.timezone('America/Sao_Paulo')

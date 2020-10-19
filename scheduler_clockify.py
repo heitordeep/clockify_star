@@ -16,7 +16,7 @@ config_default = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'start_date': datetime(2020, 10, 7, tzinfo=local_tz),
+    'start_date': datetime(2020, 10, 20, tzinfo=local_tz),
     'retry_delay': timedelta(minutes=1),
 }
 
@@ -39,7 +39,7 @@ def create_dag(dag_id, schedule):
 
     def call_clockify(**kwargs):
         activate_env = f'{path_allowed}/venv/bin/activate'
-        path_project = f'{path_allowed}/clockify_star'
+        path_project = f'{path_allowed}/dags/clockify_star'
 
         # Checks whether to start or stop.
         command = (
@@ -54,7 +54,7 @@ def create_dag(dag_id, schedule):
             task_id=f'run-script-shell',
             bash_command=(
                 f'. {activate_env} && cd {path_project}/ && '
-                f'. {path_project}/cron.sh {command(schedule)} >> '
+                f'. cron.sh {command(schedule)} >> '
                 f'{path_allowed}/log_clockify.txt 2>&1'
             ),
             dag=dag,
@@ -65,7 +65,7 @@ def create_dag(dag_id, schedule):
             task_id='update-json',
             bash_command=(
                 f'. {activate_env} && cd {path_project}/ &&'
-                f'. {path_project}/cron.sh update >> '
+                f'. cron.sh update >> '
                 f'{path_allowed}/log_update_json.txt 2>&1'
             ),
             dag=dag,

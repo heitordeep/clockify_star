@@ -30,16 +30,11 @@ requirements: ## Install project packages.
 	@pip install -r requirements/requirements_dev.txt 
 
 # -------- Docker ---------
-pull: ## Pull image airflow
-	@docker pull puckel/docker-airflow
 
-up: ## Create container airflow. Name is job-clockify
-	@docker run -d -p 8080:8080 --name job-clockify -v /opt/airflow/dags:/usr/local/airflow/dags puckel/docker-airflow webserver
+up: ## Create container Airflow.
+	@docker-compose up -d
 
-file_up: ## Upload files project in container.
-	@docker cp . job-clockify:/usr/local/airflow
-
-access: ## Access container job-clockify
+access: ## Access container Airflow.
 	@docker exec -it job-clockify bash
 
 # -------- App ------------

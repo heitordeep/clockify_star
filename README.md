@@ -35,26 +35,16 @@ O projeto está em desenvolvimento, mas você já pode contar com as seguintes f
 
 ## :alarm_clock: Airflow:
 - Automatizar execuções no **Airflow**:
-    - Primeiro precisamos baixar a imagem do Airflow via docker.<br>
+    - Primeiro precisamos criar o nosso container:<br>
       ```shell
-      $ make pull
+      $ make up
       ```
-    - Vamos criar um volume no nosso container, apontando para dags que é onde o script de tarefas do airflow precisa ficar:<br>
-        ```shell
-        $ make up
-        ```
 
-    - Em seguida, vamos mover os arquivos do projeto para dentro do container:
+    - Em seguida, vamos mover os arquivos do projeto para dentro do container. Foi criado uma pasta no seu host, o caminho seria **/opt/airflow**:
 
         ```shell
-        $ make file_up
+        $ sudo cp -r clockify_star/ /opt/airflow/dags/
         ```
-        
-    - Agora, mova o arquivo de scheduler para a pasta dags:
-
-      ```shell
-      $ cp clockify_star/scheduler_clockify.py /opt/airflow/dags/ 
-      ```
         
 - Agora, precisamos instalar as bibliotecas no docker:
    - Criando env e instalando bibliotecas:
@@ -71,12 +61,13 @@ O projeto está em desenvolvimento, mas você já pode contar com as seguintes f
       ```
       
       ```shell
-      airflow@7669e2e827fa:~$  pip -r install clockify/requirements/requirements_dev.txt
+      airflow@7669e2e827fa:~$  pip -r install dags/clockify_star/requirements/requirements_dev.txt
       ```
 
       ```shell
       airflow@7669e2e827fa:~$ airflow scheduler
       ````
+
       <br><br>
 - Acessar o Airflow:
     http://0.0.0.0:8080/admin/
@@ -84,7 +75,7 @@ O projeto está em desenvolvimento, mas você já pode contar com as seguintes f
     ![airflow](https://user-images.githubusercontent.com/17969551/94273742-2f3dca80-ff1b-11ea-8204-9ae0dafb3039.png)
 
 - OBS: As definições de horas e configuração das task é definida no arquivo **scheduler_clockify.py**
-- OBS 2: Quando for necessário mudar as tags no clockify, será necessário mover o arquivo **start_job.json** atualizado para **/usr/local/airflow/clockify_star/job/** dentro do container.
+- OBS 2: Quando for necessário mudar as tags no clockify, será necessário mover o arquivo **start_job.json** atualizado para **/opt/airflow/dags/clockify_star/job/** dentro do container.
 
     
 - É necessário também criar um arquivo ```start_job.json``` na pasta **job**:

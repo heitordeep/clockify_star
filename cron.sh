@@ -2,7 +2,7 @@
 
 param=$1
 ARGS_ALLOWED=1
-PATH_FILE=/usr/local/airflow/clockify_star
+PATH_FILE=/usr/local/airflow/dags/clockify_star
 
 if [ -z $param ]
     then 
