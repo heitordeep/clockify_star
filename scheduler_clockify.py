@@ -10,13 +10,13 @@ local_tz = pendulum.timezone('America/Sao_Paulo')
 path_allowed = '/usr/local/airflow'
 
 config_default = {
-    'owner': 'Airflow',
+    'owner': 'Scheduler-Clockify',
     'depends_on_past': False,
     'email': ['heitor.aguia@gmail.com'],
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'start_date': datetime(2020, 10, 20, tzinfo=local_tz),
+    'start_date': datetime(2020, 10, 21, tzinfo=local_tz),
     'retry_delay': timedelta(minutes=1),
 }
 
