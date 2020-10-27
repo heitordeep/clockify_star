@@ -2,12 +2,11 @@ import json
 from datetime import date as dt
 from datetime import datetime, timedelta
 
-from rich.console import Console
-
 import pendulum
 import requests
 from decouple import config
 from requests.exceptions import HTTPError
+from rich.console import Console
 
 console = Console()
 local_tz = pendulum.timezone('America/Sao_Paulo')
@@ -53,7 +52,7 @@ class HandleRequests:
             response.raise_for_status()
 
             console.print(
-                f'\n[bold yellow]Logado com sucesso! - '
+                f'[bold yellow]Logado com sucesso! - '
                 f'Hora: {dt.today()} - {self.hour.strftime("%H:%M:%S")}[/bold yellow] :smiley:'
             )
 
@@ -76,7 +75,7 @@ class HandleRequests:
             response.raise_for_status()
 
             console.print(
-                f'\n[bold yellow]Deslogado com sucesso! - '
+                f'[bold yellow]Deslogado com sucesso! - '
                 f'Hora: {dt.today()} - {self.hour.strftime("%H:%M:%S")}[/bold yellow] :smiley:'
             )
 

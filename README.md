@@ -85,16 +85,14 @@ O projeto está em desenvolvimento, mas você já pode contar com as seguintes f
 
 - É necessário também criar um arquivo ```start_job.json``` na pasta **job**:
 
-    Caso não tenha **taskId** no projeto atual, coloque dessa forma o json:
+    Caso não tenha **taskId** no projeto atual, remova a chave taskId do json:
 
     ```javascript
     {
-        "projectId": "id_projeto",
+        "projectId": "project_id",
         "billable": "true ou false",
         "description": "Descrição",
-        "tagIds": ["Python", "Linux", "Google Cloud Storage", "Git"],
-        "taskId": 0
-
+        "tagIds": ["Python", "Linux", "Google Cloud Storage", "Git"]
     }
     ```
 
@@ -102,7 +100,7 @@ O projeto está em desenvolvimento, mas você já pode contar com as seguintes f
 
     ```javascript
     {
-        "projectId": "id_projeto",
+        "projectId": "project_id",
         "billable": "true ou false",
         "description": "Descrição",
         "tagIds": ["Python", "Linux", "Google Cloud Storage", "Git"],
@@ -113,10 +111,9 @@ O projeto está em desenvolvimento, mas você já pode contar com as seguintes f
 
 ## :warning:  Obtendo os ID's:
 
-- ID Projeto: ```$ make get_param id=get_project```
-- ID Tags: ```$ make get_param id=get_tags```
-- Lista ID's do Projeto: ```$ make get_param id=list_projects```
-- ID Task: ```$ make get_param id="get_task id_project"```
+- ID Projeto: ```$ make get_param id=project_id```
+- ID Tags: ```$ make get_param id=tags```
+- ID Task: ```$ make get_param id="task 5848sdaf88b484asd34"``` -> project_id
 
 - Resultado do diretório: <br>
 ![Captura de tela de 2020-08-24 14-59-01](https://user-images.githubusercontent.com/17969551/91079454-708c4300-e61a-11ea-86db-a9d48e3ea25d.png)

@@ -60,21 +60,7 @@ def create_dag(dag_id, schedule):
             dag=dag,
         )
 
-        # Update task, tags, projects id.
-        bash_update_json = BashOperator(
-            task_id='update-json',
-            bash_command=(
-                f'. {activate_env} && cd {path_project}/ &&'
-                f'. cron.sh update >> '
-                f'{path_allowed}/log_update_json.txt 2>&1'
-            ),
-            dag=dag,
-        )
-
         bash_start.execute(context=kwargs)
-        bash_update_json.execute(context=kwargs)
-
-        bash_start >> bash_update_json
 
     with dag:
 

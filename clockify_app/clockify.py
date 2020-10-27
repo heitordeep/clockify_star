@@ -3,10 +3,10 @@ from datetime import date as dt
 from datetime import datetime, timedelta
 from os import path
 
+import pendulum
 from rich.console import Console
 
-import pendulum
-from clockify_app.update_requests import HandleRequests
+from clockify_app.response_request import HandleRequests
 
 console = Console()
 
@@ -19,6 +19,13 @@ class Clockify:
     def __init__(self):
         self.hour = datetime.now(tz=local_tz) + timedelta(hours=3)
 
+    @staticmethod
+    def read_file(file_name: str) -> dict:
+        with open(path.join('job/', f'{file_name}.json'), 'r') as f:
+            data = json.loads(f.read())
+
+        return data
+
     def start(self, job: dict):
 
         job.update(
@@ -28,47 +35,37 @@ class Clockify:
 
     def end(self):
 
-        data = {"end": f'{dt.today()}T{self.hour.strftime("%H:%M:%S.%f")}Z'}
-        request.patch(data)
+        request.patch(
+            {"end": f'{dt.today()}T{self.hour.strftime("%H:%M:%S.%f")}Z'}
+        )
 
-    def create_job(self, job: list, tags: list) -> dict:
-        payload = {}
-
-        if job['taskId'] == 0:
-            del job['taskId']
+    def build_tags(self, tags: dict, job: dict) -> dict:
+        payload = []
 
         for tag_job in job['tagIds']:
             if tag_job in tags.keys():
-                payload[tag_job] = tags[tag_job]
+                payload.append(tags[tag_job])
 
-        job['tagIds'] = list(payload.values())
+        job['tagIds'] = payload
 
-        return payload
+        return job
 
-    def read_file(self, file_name: str) -> dict:
+    def build_job(self):
 
-        with open(path.join('job/', f'{file_name}.json'), 'r') as f:
-            data = json.loads(f.read())
+        data = [
+            self.read_file(file_name) for file_name in ['tags', 'start_job']
+        ]
 
-        return data
+        # files[0] - tags api
+        # files[1] - Tags of start_job
+        job = self.build_tags(*data)
 
-    def get_job(self):
+        validate_size = lambda x, v: len(x) == len(v)
 
-        files_names = ['tags', 'start_job']
-
-        files = [self.read_file(x) for x in files_names]
-
-        # files[0] - tags api and files[1] - Tags of start_job
-        content = self.create_job(files[1], files[0])
-
-        validation_count = lambda x, v: len(x) == len(v)
-
-        if validation_count(content, files[1]['tagIds']):
-            self.start(files[1])
+        if validate_size(job['tagIds'], data[1]['tagIds']):
+            self.start(job)
         else:
             console.print(
-                f'\n[bold red]Ops, tags invalidas ou vázias\nTags que foram passadas: '
-                f'{" | ".join(tag for tag in tag_job["tagIds"])}\n[/bold red]'
-                '[bold red]Recomendo você olhar o seu arquivo[/bold red] '
-                '[bold cyan]start_job.json[/bold cyan] :smiley:'
+                f'[bold red]Ops, tags inválidas ou nula.\n'
+                'Verifique o arquivo start_job.json [/bold cyan] :smiley:'
             )

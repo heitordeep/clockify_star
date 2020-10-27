@@ -5,14 +5,14 @@ from rich.console import Console
 from clockify_app.clockify import Clockify
 
 console = Console()
-post_hour = Clockify()
+exec_clockify = Clockify()
 
 if __name__ == "__main__":
 
     if 'stop' in argv[1]:
-        post_hour.end()
+        exec_clockify.end()
     elif 'start' in argv[1]:
-        post_hour.get_job()
+        exec_clockify.build_job()
     else:
         console.print(
             '[bold red]Opção digitada é invalida\nVocê só pode passar paramêtro STOP ou START[/bold red]'

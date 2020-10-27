@@ -23,11 +23,11 @@ clean:  ## Clean python bytecodes, optimized files, cache, coverage...
 	@find . -name ".pytest_cache" -type d | xargs rm -rf
 	@echo 'Temporary files deleted'
 
-# ------ Installation requirements ------ 
+# ------ Installation requirements ------
 
 requirements: ## Install project packages.
 	@pip install --upgrade pip
-	@pip install -r requirements/requirements_dev.txt 
+	@pip install -r requirements/requirements_dev.txt
 
 # -------- Docker ---------
 
@@ -43,4 +43,4 @@ run: clean ## Post hours in the clockify. start or stop
 	@python main.py $(job)
 
 get_param: clean ## Update files job.
-	@python clockify_app/get_parameters_api.py $(id)
+	@python clockify_app/get_api_parameters.py $(id)
