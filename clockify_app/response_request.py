@@ -53,7 +53,8 @@ class HandleRequests:
 
             console.print(
                 f'[bold yellow]Logado com sucesso! - '
-                f'Hora: {dt.today()} - {self.hour.strftime("%H:%M:%S")}[/bold yellow] :smiley:'
+                f'Hora: {dt.today()} - {self.hour.strftime("%H:%M:%S")}'
+                '[/bold yellow] :smiley:'
             )
 
         except HTTPError as error:
@@ -76,7 +77,8 @@ class HandleRequests:
 
             console.print(
                 f'[bold yellow]Deslogado com sucesso! - '
-                f'Hora: {dt.today()} - {self.hour.strftime("%H:%M:%S")}[/bold yellow] :smiley:'
+                f'Hora: {dt.today()} - {self.hour.strftime("%H:%M:%S")}'
+                '[/bold yellow] :smiley:'
             )
 
         except HTTPError as error:

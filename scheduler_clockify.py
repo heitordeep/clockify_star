@@ -10,7 +10,7 @@ local_tz = pendulum.timezone('America/Sao_Paulo')
 path_allowed = '/usr/local/airflow'
 
 config_default = {
-    'owner': 'Scheduler-Clockify',
+    'owner': 'Clockify',
     'depends_on_past': False,
     'email': ['heitor.aguia@gmail.com'],
     'email_on_failure': False,
